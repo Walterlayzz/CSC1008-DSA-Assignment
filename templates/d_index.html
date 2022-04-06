@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Page</title>
+</head>
+<style>
+    body {
+        margin: 80px 0 0 0;
+        padding: 0;
+        background: #F0F8FF;
+        font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    .sticky-header {
+        background: #F6f6f6;
+        position: fixed;
+        top: 0;
+        height: 80px;
+        width: 100%;
+        z-index: 99;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    .sticky-header h1 {
+        font-size: 2.8rem;
+        line-height: 3.2rem;
+    }
+
+    .content-sidebar {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .content-sidebar .address-input {
+        flex: 1 1 30%;
+        min-width: 30ch;
+    }
+    .content-sidebar .map {
+        flex: 1 1 70%;
+    }
+
+
+</style>
+<body>
+    <div class="sticky-header">
+        <h1>Fking Driver</h1>
+    </div>
+    <div class="container">
+        <div class="content-sidebar">
+            <div class = "address-input">
+                <form method="POST" action="">
+                </form>
+            </div>
+            <div class = "map">
+                {{ f_map | safe }}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
