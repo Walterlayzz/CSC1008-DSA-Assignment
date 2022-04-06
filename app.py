@@ -1,6 +1,7 @@
 from flask import Flask, render_template, url_for, redirect
 from flask_login import UserMixin, LoginManager, login_user, login_required, logout_user, current_user
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import relationship
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, SelectField, widgets
 from wtforms.validators import InputRequired, length, ValidationError
@@ -29,7 +30,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
     password = db.Column(db.String(80), nullable=False)
-    type = db.Column(db.String(20), nullable=False)
+    acctype = db.Column(db.String(20), nullable=False)
 
 class RegisterForm(FlaskForm):
     username = StringField(validators=[InputRequired(), length(min=4, max=20)], render_kw={"placeholder": "Username"})
@@ -66,9 +67,9 @@ def login():
         if user:
             if bcrypt.check_password_hash(user.password, form.password.data):
                 login_user(user)
-                if user.type == "Rider":
+                if user.acctype == "Rider":
                     return redirect(url_for("dashboard"))
-                elif user.type == "Driver":
+                elif user.acctype == "Driver":
                     return redirect(url_for("d_dashboard"))
 
     return render_template("login.html", form=form)
@@ -79,7 +80,7 @@ def register():
 
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data)
-        new_user = User(username=form.username.data, password=hashed_password, type="")
+        new_user = User(username=form.username.data, password=hashed_password, acctype="Rider")
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for('login'))
