@@ -5,9 +5,7 @@ from queue import PriorityQueue
 
 def Graph():
     fpEdge = open("data/edges.json")
-
     edgeDict = json.load(fpEdge)
-
     graphDict = {}
 
     for i in edgeDict:
@@ -26,18 +24,21 @@ def dijkstra(G, startNode, endNode):
 
     while priorityQueue:
         while not priorityQueue.empty():
-            _, vertex = priorityQueue.get()  # finds lowest cost vertex
-            # loop until we get a fresh vertex
+            # finds lowest dist vertex
+            _, vertex = priorityQueue.get()
+            # loop until we get a new vertex
             if vertex not in visited: break
-        else:  # if todo ran out
-            break  # quit main loop
+        else:
+            break  # break main loop
         visited.add(vertex)
         if vertex == endNode:
             break
         try:
             for neighbor, distance in G[vertex]:
-                if neighbor in visited: continue  # skip these to save time
-                oldDist = dist.get(neighbor, float('inf'))  # default to infinity
+                if neighbor in visited:
+                    continue
+                #default to infinity
+                oldDist = dist.get(neighbor, float('inf'))
                 newDist = dist[vertex] + distance
                 if newDist < oldDist:
                     priorityQueue.put((newDist, neighbor))
@@ -50,14 +51,15 @@ def dijkstra(G, startNode, endNode):
 
 
 
-def makePath(parent, goal):
-    if goal not in parent:
+def makePath(route, endNode):
+    if endNode not in route:
         return None
-    v = goal
+    v = endNode
     path = []
-    while v is not None: # root has null parent
+    # root has null parent
+    while v is not None:
         path.append(v)
-        v = parent[v]
+        v = route[v]
     return path[::-1]
 
 
