@@ -92,10 +92,10 @@ def make_path(parent, goal):
     return path[::-1]
 
 graph = Graph()
-routePath = dijkstra(graph, 4723212868, 5230847855)
+routePath = dijkstra(graph, 1249576750, 1787007911)
 # print(routePath)
 
-nodePath = make_path(routePath, 5230847855)
+nodePath = make_path(routePath, 1787007911)
 pathCoord = []
 
 fpNode = open("data/nodes.json")
