@@ -1,57 +1,53 @@
 import json
 import math
-import PriorityQueue
-
-
-class WeightedGraph():
-    def __init__(self):
-        self.edge = {}
-
-    def neighbour(self, nodeId):
-        return list(self.edge.get(nodeId).keys())
-
-    def length(self, fromNodeId, toNodeId):
-        return self.edge.get(fromNodeId).get(toNodeId)
+from queue import PriorityQueue
 
 
 def Graph():
-    fpNode = open("data/nodes.json")
     fpEdge = open("data/edges.json")
 
-    nodeDict = json.load(fpNode)
     edgeDict = json.load(fpEdge)
 
-    wg = WeightedGraph()
+    graphDict = {}
 
-    for i in nodeDict:
-        edgesTo = {}
-        for j in edgeDict:
-            if i["nodeId"] == j["nodeFrom"]:
-                edgesTo.update({j["nodeTo"]: j["length"]})
-        wg.edge.update({i["nodeId"]: edgesTo})
-    return wg
+    for i in edgeDict:
+        if i["nodeFrom"] not in graphDict:
+            graphDict[i["nodeFrom"]] = list()
+        graphDict[i["nodeFrom"]].append((i["nodeTo"], i["length"]))
+    return graphDict
 
 
-def Route(WeightedGraph, startNode, endNode):
-    routeNodes = {}
-    costNodes = {}
-    routeNodes[startNode] = None
-    costNodes[startNode] = 0
-    prioQ = PriorityQueue.PriorityQueue()
-    prioQ.enqueue(startNode, 0)
+def dijkstra(G, startNode, endNode):
+    visited = set()
+    dist = {startNode: 0}
+    parent = {startNode: None}
+    priorityQueue = PriorityQueue()
+    priorityQueue.put((0, startNode))
 
-    while not prioQ.isEmpty():
-        currNode = prioQ.dequeue()
-        if currNode["nodeId"] == endNode:
-            return routeNodes
+    while priorityQueue:
+        while not priorityQueue.empty():
+            _, vertex = priorityQueue.get()  # finds lowest cost vertex
+            # loop until we get a fresh vertex
+            if vertex not in visited: break
+        else:  # if todo ran out
+            break  # quit main loop
+        visited.add(vertex)
+        if vertex == endNode:
+            break
+        try:
+            for neighbor, distance in G[vertex]:
+                if neighbor in visited: continue  # skip these to save time
+                oldDist = dist.get(neighbor, float('inf'))  # default to infinity
+                newDist = dist[vertex] + distance
+                if newDist < oldDist:
+                    priorityQueue.put((newDist, neighbor))
+                    dist[neighbor] = newDist
+                    parent[neighbor] = vertex
+        except:
+            continue
 
-        for i in WeightedGraph.neighbour(currNode["nodeId"]):
-            cost = costNodes[currNode["nodeId"]] + WeightedGraph.length(currNode["nodeId"], i)
-            if i not in costNodes or cost < costNodes[i]:
-                costNodes[i] = cost
-                dist = cost + estDist(i, endNode)
-                prioQ.enqueue(i, dist)
-                routeNodes[i] = currNode["nodeId"]
+    return parent
+
 
 
 def makePath(parent, goal):
@@ -65,46 +61,19 @@ def makePath(parent, goal):
     return path[::-1]
 
 
-def estDist(nodeFrom, nodeTo):
-    fpNode = open("data/nodes.json")
-    nodeDict = json.load(fpNode)
-
-    fromNodeLon = 0
-    fromNodeLat = 0
-    toNodeLon = 0
-    toNodeLat = 0
-    meter = 6371 * 1000
-
-    for i in nodeDict:
-        if i["nodeId"] == nodeFrom:
-            fromNodeLon = i["longitude"]
-            fromNodeLat = i["latitude"]
-
-        if i["nodeId"] == nodeTo:
-            toNodeLon = i["longitude"]
-            toNodeLat = i["latitude"]
-
-    # calculate the approximate distance using the coordinates
-    lonDist = math.radians(toNodeLon - fromNodeLon)
-    latDist = math.radians(toNodeLat - fromNodeLat)
-
-    a = pow(math.sin(latDist / 2), 2) + math.cos(math.radians(fromNodeLat)) * math.cos(math.radians(toNodeLat)) * pow(
-        math.sin(lonDist / 2), 2)
-    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-
-    return meter * c
-
 
 def convertPathToCoord(startNode, endNode):
-    wg = Graph()
-    routePath = Route(wg, startNode, endNode)
-
+    graph = Graph()
+    routePath = dijkstra(graph, startNode, endNode)
+    print(routePath)
+    #list of nodes to traverse
     nodePath = makePath(routePath, endNode)
     pathCoord = []
 
     fpNode = open("data/nodes.json")
     nodeDict = json.load(fpNode)
 
+    #convert the list of nodes to list of coordinates
     for i in range(len(nodePath)):
         for j in range(len(nodeDict)):
             if nodePath[i] == nodeDict[j]["nodeId"]:
@@ -115,7 +84,7 @@ def convertPathToCoord(startNode, endNode):
 
     return pathCoord
 
-# print(convertPathToCoord(1249576750 , 1787007911))
+print(convertPathToCoord(1249576750 , 1787007911))
 
 # "name": "Maury", "passengerFromNode": 1249576750, "passengerToNode": 1787007911,
 # {
