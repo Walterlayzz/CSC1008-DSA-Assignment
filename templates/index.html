@@ -2,65 +2,122 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login Page</title>
+    <title>Ride</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link href="/stylesheet" rel="stylesheet">
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            riderData().then(response => {
+                let riders = document.querySelectorAll(".rider");
+                for (let i = 0; i < riders.length; i++)
+                {
+                    riders[i].addEventListener("click", function()
+                    {
+                        document.querySelector("#updateRider").innerHTML = riders[i].innerText;
+                        document.querySelector("#driverCont").style.cssText = "visibility:visible;";
+                        fetch("/passengersDetailed").then(function(response) {
+                            return response.json();
+                        }).then(function(data) {
+                            for (let j=0; j<data.length; j++) {
+                                if (data[j].name == riders[i].innerText){
+                                    document.querySelector("#toAddr").innerHTML = data[j].toAddr;  
+                                    document.querySelector("#fromAddr").innerHTML = data[j].fromAddr;  
+                                }
+                            }
+                        });
+                    })
+                };
+            });
+
+            driverData().then(response => {
+                let drivers = document.querySelectorAll(".driver");
+                for (let i = 0; i < drivers.length; i++)
+                {
+                    drivers[i].addEventListener("click", function()
+                    {
+                        document.querySelector("#updateDriver").innerHTML = drivers[i].innerText;
+                    });
+                };
+            });
+        })
+        // Riders
+        function riderData() {
+            return fetch("/passengers")
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                data.forEach(function(data) {
+                    var $button = $("<button>" + data.name + "</button>");
+                    $button.addClass("rider");
+                    $button.appendTo("#riderCont");
+                });
+            })
+            .catch(function (err) {
+                console.log(err);
+            });
+        }
+        
+        // Drivers 
+        function driverData() {
+            return fetch("/driversjson")
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                data.forEach(function(data) {
+                    var $button = $("<button>" + data.name + "</button>");
+                    $button.addClass("driver");
+                    $button.appendTo("#driverCont");
+                });
+            })
+            .catch(function (err) {
+                console.log(err);
+            });
+        }
+    </script>
 </head>
-<style>
-    body {
-        margin: 80px 0 0 0;
-        padding: 0;
-        background: #F0F8FF;
-        font-family: "Segoe UI", Arial, sans-serif;
-    }
-
-    .sticky-header {
-        background: #F6f6f6;
-        position: fixed;
-        top: 0;
-        height: 80px;
-        width: 100%;
-        z-index: 99;
-        box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    }
-
-    .sticky-header h1 {
-        font-size: 2.8rem;
-        line-height: 3.2rem;
-    }
-
-    .content-sidebar {
-        display: flex;
-        flex-wrap: wrap;
-    }
-
-    .content-sidebar .address-input {
-        flex: 1 1 30%;
-        min-width: 30ch;
-    }
-    .content-sidebar .map {
-        flex: 1 1 70%;
-    }
-
-
-</style>
 <body>
     <div class="sticky-header">
         <h1>WELCOME</h1>
-        <a href="{{url_for('logout')}}">Logout</a>
+        <label id="result"></label>
     </div>
     <div class="container">
-        <div class="content-sidebar">
-            <div class = "address-input">
-                <form method="POST" action="">
-                    {{ form.hidden_tag() }}
-                    {{ form.addressFrom }}
-                    {{ form.destination }}
-                    {{ form.shared }}
-                    {{ form.submit }}
-                </form>
+        <div class="contents">
+            <div class="description">
+                <table class="centerTable">
+                    <th>Trip Information</th>
+                    <tr>
+                        <td>Passenger Name:</td>
+                        <td id="updateRider">-</td>
+                    </tr>
+                    <tr>
+                        <td>To:</td>
+                        <td id="toAddr">-</td>
+                    </tr>
+                    <tr>
+                        <td>From:</td>
+                        <td id="fromAddr">-</td>
+                    </tr>
+                    <tr>
+                        <td>Driver Name:</td>
+                        <td id="updateDriver">-</td>
+                    </tr>
+                    <tr>
+                        <td>Trip Fare:</td>
+                        <td>$25.40</td>
+                    </tr>
+                </table>
             </div>
-            <div class = "map">
-                {{ f_map | safe }}
+            <div class="selection">
+                <div id="riderCont" class="col">
+                </div>
+                <div id="driverCont" class="col">
+                </div>
             </div>
+        </div>
+        <div class="map">
+            {{ f_map | safe }}
         </div>
     </div>
 </body>

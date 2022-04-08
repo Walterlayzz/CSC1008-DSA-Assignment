@@ -1,29 +1,26 @@
 [
     {
-        "DriverName": "Wen Yang",
-        "location": 4538914740,
-        "locationLat": 1.4173597,
-        "locationlong": 103.8330179
+    "name": "Daniel",
+    "nodeId": 5129163188,
+    "longitude": 103.8017649,
+    "latitude": 1.2866672
     },
-
     {
-        "DriverName": "Walter",
-        "location": 4538914740,
-        "locationLat": 1.4173597,
-        "locationlong": 103.8330179
+    "name": "Ryan",
+    "nodeId": 2921828797,
+    "longitude": 103.7973162,
+    "latitude": 1.3021886
     },
-
     {
-        "DriverName": "Glennice",
-        "location": 4538914740,
-        "locationLat": 1.4173597,
-        "locationlong": 103.8330179
-    }
-
-    ,{
-        "DriverName": "Vincent",
-        "location": 4538914740,
-        "locationLat": 1.4173597,
-        "locationlong": 103.8330179
-    }
+    "name": "Eunice",
+    "nodeId": 6947990398,
+    "longitude": 103.7918624,
+    "latitude": 1.2973822
+    },
+    {
+    "name": "Jeffrey",
+    "nodeId": 4734863627,
+    "longitude": 103.7733702,
+    "latitude": 1.3089661
+    }  
 ]
