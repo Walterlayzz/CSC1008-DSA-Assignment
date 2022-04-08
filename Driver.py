@@ -1,12 +1,16 @@
 
 class Driver:
-    def __init__(self, driverId, name, longitude, latitude):
-        self.driverId = driverId
+    def __init__(self, name, node, longitude, latitude):
         self.name = name
+        self.node = node
         self.longitude = longitude
         self.latitude = latitude
-        self.next = None
-        self.prev = None
+        self.distToPass = 0
+
+
+
+
+
 
 # class DriverLinkedList:
 #     def __init__(self):
