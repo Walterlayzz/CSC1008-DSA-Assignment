@@ -2,16 +2,6 @@ import json
 import math
 from queue import PriorityQueue
 
-class WeightedGraph():
-    def __init__(self):
-        self.edge = {}
-
-    def neighbour(self, nodeId):
-        return list(self.edge.get(nodeId).keys())
-
-    def length(self, fromNodeId, toNodeId):
-        return self.edge.get(fromNodeId).get(toNodeId)
-
 
 def Graph():
     fpNode = open("data/nodes.json")
@@ -26,10 +16,7 @@ def Graph():
     for i in edgeDict:
         if i["nodeFrom"] not in graphDict:
             graphDict[i["nodeFrom"]] = list()
-        for j in graphDict[i["nodeFrom"]]:
-            if i["nodeTo"] not in j:
-                graphDict[i["nodeFrom"]].append((i["nodeTo"], i["length"]))
-
+        graphDict[i["nodeFrom"]].append((i["nodeTo"], i["length"]))
     return graphDict
 
 
@@ -68,10 +55,12 @@ def dijkstra(G, start, goal):
 def estDist(nodeFrom, nodeTo):
     fpNode = open("data/nodes.json")
     nodeDict = json.load(fpNode)
+
     fromNodeLon = 0
     fromNodeLat = 0
     toNodeLon = 0
     toNodeLat = 0
+
     for i in nodeDict:
         if i["nodeId"] == nodeFrom:
             fromNodeLon = i["longitude"]
@@ -103,10 +92,10 @@ def make_path(parent, goal):
     return path[::-1]
 
 graph = Graph()
-routePath = dijkstra(graph, 4734863627, 5239711167)
-print(routePath)
+routePath = dijkstra(graph, 4723212868, 5230847855)
+# print(routePath)
 
-nodePath = make_path(routePath, 5239711167)
+nodePath = make_path(routePath, 5230847855)
 pathCoord = []
 
 fpNode = open("data/nodes.json")
@@ -115,8 +104,8 @@ nodeDict = json.load(fpNode)
 for i in range(len(nodePath)):
     for j in range(len(nodeDict)):
         if nodePath[i] == nodeDict[j]["nodeId"]:
-            longitude = nodeDict[i]["longitude"]
-            latitude = nodeDict[i]["latitude"]
+            longitude = nodeDict[j]["longitude"]
+            latitude = nodeDict[j]["latitude"]
             coord = (latitude, longitude)
             pathCoord.append(coord)
 

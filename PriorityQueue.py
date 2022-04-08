@@ -5,10 +5,20 @@ class Node:
         self.next = None
         self.prev = None
 
-class QueueLinkedList:
+
+class LinkedList:
     def __init__(self):
         self.head = None
         self.tail = None
+
+    def __len__(self):
+        temp = self.head
+        count = 0
+        while temp is not None:
+            count += 1
+            temp = temp.next
+
+        return count
 
     def insertAtHead(self, node):
         if self.head is None:
@@ -17,14 +27,6 @@ class QueueLinkedList:
             self.head.prev = node
             node.next = self.head
             self.head = node
-
-    def insertAtTail(self, node):
-        if self.tail is None:
-            self.head = self.tail = node
-        else:
-            self.tail.next = node
-            node.prev = self.tail
-            self.tail = node
 
     def delete(self, node):
         temp = self.head
@@ -48,6 +50,14 @@ class QueueLinkedList:
                 del temp
                 return
 
+    def insertAtTail(self, node):
+        if self.tail is None:
+            self.head = self.tail = node
+        else:
+            self.tail.next = node
+            node.prev = self.tail
+            self.tail = node
+
     def insert(self, node):
         if self.__len__() == 0 or node.length <= self.head.length:
             self.insertAtHead(node)
@@ -57,7 +67,7 @@ class QueueLinkedList:
             temp = self.head.next
             prev = self.head
             while temp is not None:
-                if temp.length >= node.length and prev.length <= node.length:
+                if temp.length >= node.length >= prev.length:
                     node.next = temp
                     temp.prev = node
                     node.prev = prev
@@ -67,32 +77,24 @@ class QueueLinkedList:
                     temp = temp.next
                     prev = prev.next
 
-    def __len__(self):
-        temp = self.head
-        count = 0
-        while temp is not None:
-            count += 1
-            temp = temp.next
-
-        return count
 
 class PriorityQueue:
     def __init__(self):
-        self.prioList = QueueLinkedList()
+        self.prioList = LinkedList()
 
     def enqueue(self, node, length):
         self.prioList.insert(Node(node, length))
 
     def dequeue(self):
-        output = {
+        node = {
             "nodeId": self.prioList.head.nodeId,
             "length": self.prioList.head.length
         }
 
         self.prioList.delete(self.prioList.head.nodeId)
-        return output
+        return node
 
     def isEmpty(self):
-        if(len(self.prioList) == 0):
+        if len(self.prioList) == 0:
             return True
         return False
