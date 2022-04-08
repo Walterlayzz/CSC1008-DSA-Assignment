@@ -1,0 +1,104 @@
+body {
+    margin: 80px 0 0 0;
+    padding: 0;
+    background: #F0F8FF;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.sticky-header {
+    background: #F6f6f6;
+    position: fixed;
+    top: 0;
+    height: 80px;
+    width: 100%;
+    z-index: 99;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+.sticky-header h1 {
+    font-size: 2.8rem;
+    line-height: 3.2rem;
+}
+
+.contents {
+    margin: 0 auto;
+    text-align: center;
+}
+
+.centerTable {
+    margin: 0 auto;
+    margin-bottom: 25px;
+    text-align: left;
+}
+
+.container {
+    margin-top: 10px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.container .contents {
+    flex: 1 1 30%;
+    min-width: 300px;
+}
+
+.container .map {
+    flex: 1 1 70%;
+}
+
+.selection {
+    display: block;
+}
+
+.selection > * {
+    display: inline-block;
+}
+
+.col button{
+    background-color: #a8c3f7;
+    border: 1px solid orange;
+    padding: 10px 24px;
+    width: 100%;
+    display: block;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.col button:not(:last-child) {
+    border-bottom: none;
+    margin-bottom: 10px;
+}
+
+.col button:hover {
+    background-color: #4041d4;
+}
+
+#riderCont {
+    padding-right: 20px;
+    border-right: 1px solid #ccc;
+}
+
+#driverCont {
+    padding-left: 20px;
+}
+
+@media screen and (max-width: 1000px) {
+    .contents {
+        display: block;
+        padding: 20px 0;
+        width: 100%;
+    }
+
+    .contents > * {
+        display: inline-block;
+    }
+
+    .description {
+        padding-right: 40px;
+    }
+}
+
+#driverCont {
+    visibility: hidden;
+}
