@@ -33,27 +33,36 @@ def Graph():
 
 
 def Route(WeightedGraph, startNode, endNode):
-    route = {}
-    costTable = {}
-    route[startNode] = None
-    costTable[startNode] = 0
+    routeNodes = {}
+    costNodes = {}
+    routeNodes[startNode] = None
+    costNodes[startNode] = 0
     prioQ = PriorityQueue.PriorityQueue()
     prioQ.enqueue(startNode, 0)
 
     while not prioQ.isEmpty():
         currNode = prioQ.dequeue()
         if currNode["nodeId"] == endNode:
-            return route
+            return routeNodes
 
         for i in WeightedGraph.neighbour(currNode["nodeId"]):
-            cost = costTable[currNode["nodeId"]] + WeightedGraph.length(currNode["nodeId"], i)
-            if i not in costTable or cost < costTable[i]:
-                costTable[i] = cost
+            cost = costNodes[currNode["nodeId"]] + WeightedGraph.length(currNode["nodeId"], i)
+            if i not in costNodes or cost < costNodes[i]:
+                costNodes[i] = cost
                 dist = cost + estDist(i, endNode)
                 prioQ.enqueue(i, dist)
-                route[i] = currNode["nodeId"]
-    print("No Path")
-    return False
+                routeNodes[i] = currNode["nodeId"]
+
+
+def makePath(parent, goal):
+    if goal not in parent:
+        return None
+    v = goal
+    path = []
+    while v is not None: # root has null parent
+        path.append(v)
+        v = parent[v]
+    return path[::-1]
 
 
 def estDist(nodeFrom, nodeTo):
@@ -64,6 +73,7 @@ def estDist(nodeFrom, nodeTo):
     fromNodeLat = 0
     toNodeLon = 0
     toNodeLat = 0
+    meter = 6371 * 1000
 
     for i in nodeDict:
         if i["nodeId"] == nodeFrom:
@@ -82,35 +92,35 @@ def estDist(nodeFrom, nodeTo):
         math.sin(lonDist / 2), 2)
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
-    dist = (6371 * 1000) * c
-    return dist
+    return meter * c
 
-def makePath(parent, goal):
-    if goal not in parent:
-        return None
-    v = goal
-    path = []
-    while v is not None: # root has null parent
-        path.append(v)
-        v = parent[v]
-    return path[::-1]
 
-# graph = Graph()
-# routePath = Route(graph, 4734863627, 5239711167)
-# print(routePath)
-#
-# nodePath = make_path(routePath, 5239711167)
-# pathCoord = []
-#
-# fpNode = open("data/nodes.json")
-# nodeDict = json.load(fpNode)
-#
-# for i in range(len(nodePath)):
-#     for j in range(len(nodeDict)):
-#         if nodePath[i] == nodeDict[j]["nodeId"]:
-#             longitude = nodeDict[j]["longitude"]
-#             latitude = nodeDict[j]["latitude"]
-#             coord = (latitude, longitude)
-#             pathCoord.append(coord)
-#
-# print(pathCoord)
+def convertPathToCoord(startNode, endNode):
+    wg = Graph()
+    routePath = Route(wg, startNode, endNode)
+
+    nodePath = makePath(routePath, endNode)
+    pathCoord = []
+
+    fpNode = open("data/nodes.json")
+    nodeDict = json.load(fpNode)
+
+    for i in range(len(nodePath)):
+        for j in range(len(nodeDict)):
+            if nodePath[i] == nodeDict[j]["nodeId"]:
+                longitude = nodeDict[j]["longitude"]
+                latitude = nodeDict[j]["latitude"]
+                coord = (latitude, longitude)
+                pathCoord.append(coord)
+
+    return pathCoord
+
+# print(convertPathToCoord(1249576750 , 1787007911))
+
+# "name": "Maury", "passengerFromNode": 1249576750, "passengerToNode": 1787007911,
+# {
+#     "name": "Daniel",
+#     "nodeId": 5129163188,
+#     "longitude": 103.8017649,
+#     "latitude": 1.2866672
+#     },
